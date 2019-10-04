@@ -1,13 +1,45 @@
+//nodemon server.js -e js,hbs
 const express = require('express');
 const hbs = require('hbs');
 const fs = require('fs');
 
-const port= process.env.PORT || 3000;
+const path = require('path');
+//use bodyParser middleware
+const bodyParser = require('body-parser');
+//use mysql database
+const mysql = require('mysql');
+
+
+
+const port = process.env.PORT || 3000;
 
 var app = express();
 
+//Create connection
+const conn = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'sudhir',
+    database: 'nodeleave'
+});
+
+//connect to database
+conn.connect((err) => {
+    if (err) throw err;
+    console.log('Mysql Connected...');
+});
+
+
 hbs.registerPartials(__dirname + '/views/partials');
 //app.use('view engine', 'hbs');
+app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({ extended: false }));
+//set public folder as static folder for static file
+//app.use('/assets',express.static(__dirname + '/public'));
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
+//set public folder as static folder for static file
 app.use(express.static(__dirname + '/public'));
 
 app.use((req, res, next) => {
@@ -22,9 +54,6 @@ app.use((req, res, next) => {
     });
     next();
 });
-// app.use((req, res, next) => {
-//     res.render('maintenance.hbs');
-// });
 
 hbs.registerHelper('getCurrentYear', () => {
     return new Date().getFullYear()
@@ -35,6 +64,7 @@ hbs.registerHelper('screamIt', (text) => {
     return text.toUpperCase();
 });
 
+//route for homepage
 app.get('/', (req, res) => {
     res.render('home.hbs', {
         pageTitle: 'Employee Leave Management System',
@@ -42,19 +72,51 @@ app.get('/', (req, res) => {
         welcomeMessage: 'Employee Leave Management System using NodeJS and MySql'
 
     });
-    // res.send('Hello Express!');
-    //Sending html content to client 
-    //res.send('<h1>Hello Express!</h1>');
-    //Send JSON 
-    // res.send({
-    //     name: 'Sudhir',
-    //     likes: [
-    //         'biking',
-    //         'movies',
-    //         'Mr.Robot'
-    //     ]
-    // });
 });
+//route for display employees
+app.get('/employees', (req, res) => {
+    let sql = "SELECT * FROM employee";
+    let query = conn.query(sql, (err, results) => {
+        if (err) throw err;
+        res.render('displayemployees.hbs', {
+            results: results,
+            pageTitle: 'List of all the employees'
+        });
+    });
+});
+
+//route for saving the employee details
+app.post('/save', (req, res) => {
+    //id =Math.ceil(Math.random(0, 99999)*(0-99999)+99999);
+    let data = {
+        id: req.body.txt_id,
+        name: req.body.txt_name,
+        password: req.body.txt_password,
+        mobile: req.body.txt_mobile,
+        email: req.body.txt_email,
+        aadhaar: req.body.txt_aadhaar,
+        department: req.body.txt_department,
+        dob: req.body.txt_dob,
+        salary: req.body.txt_salary,
+        doj: req.body.txt_doj
+    };
+    let sql = "INSERT INTO employee SET ?";
+    let query = conn.query(sql, data, (err, results) => {
+        if (err) throw err;
+        res.redirect('/');
+    });
+});
+
+//route for update data
+// app.post('/update', (req, res) => {
+//     let sql = "UPDATE employee SET name='" + req.body.txt_name + "', password='" + req.body.txt_password + "' WHERE id=" + req.body.id+"";
+//     let query = conn.query(sql, (err, results) => {
+//         if (err) throw err;
+//         res.redirect('/');
+//     });
+// });
+
+
 
 app.get('/about', (req, res) => {
     //res.send('About us Page');
@@ -63,8 +125,8 @@ app.get('/about', (req, res) => {
     });
 });
 
-app.get('/projects',(req,res)=>{
-    res.render('projects.hbs',{
+app.get('/projects', (req, res) => {
+    res.render('projects.hbs', {
         pageTitle: 'Projects'
     });
 });
