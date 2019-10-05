@@ -17,7 +17,7 @@ var app = express();
 
 //Create connection
 const conn = mysql.createConnection({
-    host: 'localhost',
+    host: '127.0.0.1',
     user: 'root',
     password: 'sudhir',
     database: 'nodeleave'
@@ -80,7 +80,8 @@ app.get('/employees', (req, res) => {
         if (err) throw err;
         res.render('displayemployees.hbs', {
             results: results,
-            pageTitle: 'List of all the employees'
+            pageTitle: 'List of all the employees',
+            randomid: id =Math.ceil(Math.random(0, 99999)*(0-99999)+99999)
         });
     });
 });
@@ -108,14 +109,22 @@ app.post('/save', (req, res) => {
 });
 
 //route for update data
-// app.post('/update', (req, res) => {
-//     let sql = "UPDATE employee SET name='" + req.body.txt_name + "', password='" + req.body.txt_password + "' WHERE id=" + req.body.id+"";
-//     let query = conn.query(sql, (err, results) => {
-//         if (err) throw err;
-//         res.redirect('/');
-//     });
-// });
+app.post('/update', (req, res) => {
+    let sql = "UPDATE employee SET name = '" + req.body.txt_name + "', password = '" + req.body.txt_password + "', mobile = '" + req.body.txt_mobile + "', email = '" + req.body.txt_email + "', aadhaar = '" + req.body.txt_aadhaar + "', department = '" + req.body.txt_department + "', dob = '" + req.body.txt_dob + "', salary = '" + req.body.salary + "', doj = '" + req.body.doj + "' WHERE id = '" + req.body.id + "'";
+    let query = conn.query(sql, (err, results) => {
+        if (err) throw err;
+        res.redirect('/');
+    });
+});
 
+//route for delete data
+app.post('/delete', (req, res) => {
+    let sql = "DELETE FROM employee WHERE id=" + req.body.id + "";
+    let query = conn.query(sql, (err, results) => {
+        if (err) throw err;
+        res.redirect('/');
+    });
+});
 
 
 app.get('/about', (req, res) => {
