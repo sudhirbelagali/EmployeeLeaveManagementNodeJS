@@ -3,7 +3,7 @@ const express = require('express');
 const hbs = require('hbs');
 const fs = require('fs');
 
-const path = require('path');
+// const path = require('path');
 //use bodyParser middleware
 const bodyParser = require('body-parser');
 //use mysql database
@@ -81,7 +81,7 @@ app.get('/employees', (req, res) => {
         res.render('displayemployees.hbs', {
             results: results,
             pageTitle: 'List of all the employees',
-            randomid: id =Math.ceil(Math.random(0, 99999)*(0-99999)+99999)
+            randomid: id = Math.ceil(Math.random(0, 99999) * (0 - 99999) + 99999)
         });
     });
 });
@@ -102,6 +102,27 @@ app.post('/save', (req, res) => {
         doj: req.body.txt_doj
     };
     let sql = "INSERT INTO employee SET ?";
+    let query = conn.query(sql, data, (err, results) => {
+        if (err) throw err;
+        res.redirect('/');
+    });
+});
+
+//route for saving the leave details
+app.get('/applyleave', (req, res) => {
+    res.render('applyleave.hbs', {
+        pageTitle: 'Apply Leave',
+    });
+});
+//app for saving the leave details
+app.post('/applyleaveaction', (req, res) => {
+    let data = {
+        typeofleave: req.body.txt_typeofleave,
+        startdate: req.body.txt_startdate,
+        enddate: req.body.txt_enddate,
+        reason: req.body.txt_reason
+    };
+    let sql = "INSERT INTO leaves SET ?";
     let query = conn.query(sql, data, (err, results) => {
         if (err) throw err;
         res.redirect('/');

@@ -1,7 +1,35 @@
 <header>
-    <h1>{{pageTitle}}</h1>
-    <p><a href="/">HOME</a></p>
-    <p><a href="/about">ABOUT</a></p>
-    <p><a href="/projects">PROJECTS</a></p>
-    <p><a href="/employees">Employees</a></p>
+    <h2>{{pageTitle}}</h2>
+    <div class="nav">
+
+        <nav>
+            <ul>
+                <li>
+                    <a href="/">HOME</a>
+                </li>
+                <li>
+                    <a href="/about">ABOUT</a>
+                </li>
+                <li>
+                    <a href="/projects">PROJECTS</a>
+                </li>
+                <li>
+                    <a href="/employees">EMPLOYEES</a>
+                </li>
+                <li>
+                    <a href="/applyleave">APPLY LEAVE</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 </header>
+<style type="text/css">
+    .nav {
+        position: relative;
+        width: 300px;
+        padding: 20px;
+        margin-left: 200px;
+        border: 1px solid #cccfff;
+        box-shadow: 0 2px 0 2px aqua;
+    }
+</style>

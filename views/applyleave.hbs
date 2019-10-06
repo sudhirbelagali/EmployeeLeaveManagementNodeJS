@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+{{> head}}
+
+<body>
+    {{> header}}<br><br>
+    <div class="container">
+        <form action="/applyleaveaction" method="post">
+            
+                <div class="form-group">
+                    <label>Type of Leave</label>
+                    <select name="txt_typeofleave" required>
+                        <option value="PL">PAID LEAVE</option>
+                        <option value="CL">COMPLIMENTARY LEAVE</option>
+                        <option value="CO">COMP-OFF</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" name="txt_startdate" required>
+                </div>
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" name="txt_enddate" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="txt_reason" placeholder="Reason" required>
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+
+
+        </form>
+    </div>
+    
+</body>
+
+
+{{> footer}}
+</body>
+
+</html>
