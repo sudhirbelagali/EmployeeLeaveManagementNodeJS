@@ -49,7 +49,6 @@ app.use((req, res, next) => {
     fs.appendFileSync('server.log', log + '\n', (err) => {
         if (err) {
             console.log('unable to append to server log');
-
         }
     });
     next();
@@ -114,13 +113,14 @@ app.get('/applyleave', (req, res) => {
         pageTitle: 'Apply Leave',
     });
 });
-//app for saving the leave details
+//route for saving the leave details
 app.post('/applyleaveaction', (req, res) => {
     let data = {
         typeofleave: req.body.txt_typeofleave,
         startdate: req.body.txt_startdate,
         enddate: req.body.txt_enddate,
-        reason: req.body.txt_reason
+        reason: req.body.txt_reason,
+        status: '1'
     };
     let sql = "INSERT INTO leaves SET ?";
     let query = conn.query(sql, data, (err, results) => {
@@ -147,7 +147,28 @@ app.post('/delete', (req, res) => {
     });
 });
 
+//route for displaying leaves
+app.get('/displayleaves', (req, res) => {
+    let sql = "SELECT * FROM leaves";
+    let query = conn.query(sql, (err, results) => {
+        if (err) throw err;
+        res.render('displayleaves.hbs', {
+            results: results,
+            pageTitle: 'Leaves',
+        });
+    });
 
+});
+
+//route for rejecting leaves
+app.post('/reject', (req, res) => {
+    let sql = `UPDATE leaves SET status='0' WHERE id=` + req.body.id ;
+    let query = conn.query(sql, (err, results) => {
+        if (err) throw err;
+        console.log("Deleted Successfully!");
+        res.redirect('/');
+    });
+});
 app.get('/about', (req, res) => {
     //res.send('About us Page');
     res.render('about.hbs', {
